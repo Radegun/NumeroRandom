@@ -12,3 +12,8 @@ Dockerfile.*
 README*.md
 node_modules/
 wwwroot/lib/
+*.log 
+*.md 
+.vscode/ 
+docker-compose*
+TestResults/
