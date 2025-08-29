@@ -1,0 +1,17 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Random Number Generator";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Generador de Números Aleatorios 🎲</h1>
+    <form method="post">
+        <button type="submit" class="btn btn-primary">Generar número</button>
+    </form>
+
+    @if (Model.RandomNumber.HasValue)
+    {
+        <h2 class="mt-3">Número generado: <strong>@Model.RandomNumber</strong></h2>
+    }
+</div>
