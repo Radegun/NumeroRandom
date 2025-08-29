@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RandomNumberApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2eee34d28c8aa6130fa66b884355cc27aa908ef4")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6d7c57a6b81c11be4ae44f93ddd1b5421334428c")]
 [assembly: System.Reflection.AssemblyProductAttribute("RandomNumberApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RandomNumberApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
