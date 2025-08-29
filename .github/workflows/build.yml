@@ -1,47 +1,91 @@
-name: ci
+name: SonarCloud
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
   pull_request:
+    types: [opened, synchronize, reopened]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    name: Build and analyze
+    runs-on: windows-latest
 
     steps:
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: zulu
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # Sonar necesita el historial para blame
+          fetch-depth: 0
 
-      - name: Setup .NET
+      - name: Setup .NET 8
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
 
-      - name: Setup Java (para Sonar)
-        uses: actions/setup-java@v4
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'   # <-- clave para evitar el fallo de JGit
+          path: ~\sonar\cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
 
-      - name: Restore
-        run: dotnet restore
+      - name: Cache SonarCloud scanner
+        id: cache-sonar-scanner
+        uses: actions/cache@v4
+        with:
+          path: .\.sonar\scanner
+          key: ${{ runner.os }}-sonar-scanner
+          restore-keys: ${{ runner.os }}-sonar-scanner
 
-      - name: Build
-        run: dotnet build --configuration Release --no-restore
+      - name: Install SonarCloud scanner
+        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+        shell: powershell
+        run: |
+          New-Item -Path .\.sonar\scanner -ItemType Directory | Out-Null
+          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
 
-      - name: Test
-        run: dotnet test --no-build --verbosity normal
-
-      - name: SonarCloud Scan
-        uses: sonarsource/sonarcloud-github-action@v2
+      - name: SonarCloud Begin
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          args: >
-            -Dsonar.projectKey=TU_ORG_TU_PROYECTO
-            -Dsonar.organization=TU_ORG
-            -Dsonar.host.url=https://sonarcloud.io
-            -Dsonar.cs.opencover.reportsPaths=**/TestResults/**/coverage.opencover.xml
+        shell: powershell
+        run: >
+          .\.sonar\scanner\dotnet-sonarscanner begin
+          /k:"Radegun_NumeroRandom"
+          /o:"radegun"
+          /d:sonar.host.url="https://sonarcloud.io"
+          /d:sonar.token="$env:SONAR_TOKEN"
+
+      - name: Restore & Build solution (¡importante! usar .sln)
+        shell: powershell
+        run: |
+          dotnet restore .\NumeroRandom.sln
+          dotnet build   .\NumeroRandom.sln -c Release --no-restore
+
+      # (Opcional) si ejecutas tests .NET y quieres que SonarCloud los tome, descomenta:
+      # - name: Test with trx + coverage
+      #   shell: powershell
+      #   run: |
+      #     dotnet test .\WebApp.sln -c Release --no-build `
+      #       --logger "trx;LogFileName=test_results.trx" `
+      #       /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
+      #   env:
+      #     # Si usas coverage, añade también:
+      #     # /d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx"
+      #     # /d:sonar.cs.opencover.reportsPaths="**/coverage.cobertura.xml"
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: SonarCloud End
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        shell: powershell
+        run: >
+          .\.sonar\scanner\dotnet-sonarscanner end
+          /d:sonar.token="$env:SONAR_TOKEN"
+
+
+          
