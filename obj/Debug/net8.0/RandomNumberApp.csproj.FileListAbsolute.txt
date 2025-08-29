@@ -28,3 +28,4 @@ C:\Users\Carlos\Desktop\INE\Proyecto Git\numerorandom\obj\Debug\net8.0\refint\Ra
 C:\Users\Carlos\Desktop\INE\Proyecto Git\numerorandom\obj\Debug\net8.0\RandomNumberApp.pdb
 C:\Users\Carlos\Desktop\INE\Proyecto Git\numerorandom\obj\Debug\net8.0\RandomNumberApp.genruntimeconfig.cache
 C:\Users\Carlos\Desktop\INE\Proyecto Git\numerorandom\obj\Debug\net8.0\ref\RandomNumberApp.dll
+C:\Users\Carlos\Desktop\INE\Proyecto Git\NumeroRandom\obj\Debug\net8.0\RandomNumberApp.sourcelink.json
