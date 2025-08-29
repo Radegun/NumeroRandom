@@ -70,7 +70,7 @@ jobs:
       - name: Test with trx + coverage
         shell: powershell
         run: |
-           dotnet test .\WebApp.sln -c Release --no-build `
+           dotnet test .\NumeroRandom.sln -c Release --no-build `
              --logger "trx;LogFileName=test_results.trx" `
              /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
       # env:
